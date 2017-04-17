@@ -57,16 +57,19 @@ public class RegistroCityWowzer extends ActionBarActivity {
                 registro.setEmail(ETEmail.getText().toString());
                 registro.setPassword(ETPassword.getText().toString());
                 registro.setId_wowzer(ETIdUsuario.getText().toString());
+                registro.setEstado_civil(SpEdoCivil.getSelectedItem().toString());
 
                 //TODO verificar el Spinner
                 //SpEdoCivil.g
-                registro.setEstado_civil("S");
+               /* registro.setEstado_civil("S");*/
+
                 if (RadioHombre.isChecked()){
                     registro.setSexo("M");
                 }
                 else{
                     registro.setSexo("F");
                 }
+                Log.i("estadocivil2:", SpEdoCivil.getSelectedItem().toString());
                 Log.i("nombre:", registro.getNombre());
                 Log.i("Apellido:", registro.getApellido());
                 Log.i("Email:", registro.getEmail());
