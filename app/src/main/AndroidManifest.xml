@@ -41,13 +41,13 @@
 
         <meta-data
             android:name="com.here.android.maps.appid"
-            android:value="oGGjfA57jT9U5pUVmuyP" />
+            android:value="9O9uVPKqxzGWj4Xrnq8n"/>
         <meta-data
             android:name="com.here.android.maps.apptoken"
-            android:value="CK6hB6j0Q-_ivWlHFj6vcQ" />
+            android:value="mHp3J56eRSM0i5GnFHrx-g" />
         <meta-data
             android:name="com.here.android.maps.license.key"
-            android:value="KZUiPQ6bThKiKy3JhuqPbYbDZYSdAEhqFzKubmpZqeDNCqJMexOraZ09ODwEyk/h7rxB7UCoJpD8Nl6EoEu9DdYcSoFqhv49D5MpiXDU8Z4KKGkb8Fu6dn1Ok86gZK+/G4mLYTMrBnfFaeqFXB4csI7L2fMDZrLRa0bvawVtziFnngqu0hEnQWQhZ1c6Y9IvFOm43P+DMJvX+ZI9WvzDGtU206YGk83Gk0GGtrzSFNktOaU2WKrz4GfOrh2wjewi6Yg7dCaVlG4sOrEiHAMXwUTiMVBO3Ahg8rvI0I0f3wuI5kW3+04qtc02xaFv7l/L1Y2HODCEhbF+r8JQs+gxlf8n7dhAcrgz2QRngb1kSnpMQMyO8vGcze4eSX1ha26dJuxNlqxHIU+lqJXnH9KmGAEqd5YI5uZeoeuuRoRj7XdDj3xpHfmLcDw8bFBSLSLmqxx669KDR4kiim5T8NVbzL6LQ/MdvgsW99L8h1F2Q/V/Ipp3K0AZcCYOe6qJLJh36vxdsMLJFG6LjMg3xt0II1bDsjX1bDXjZbTWIeWiPcw710YF1egMabLy/MujI3l+/4eHwhIv4TTmmvDEvYmqYG4lsWZx6u2y9Y9QPmRVW/XjDmt69AVNPs51SLlTtlWJ6wI0sKr9duURtn0bKQLUn0DCIaTP0JHKCgyo1LVgmjw=" />
+            android:value="dfzrMOCT5Juu+ptdkxlELqM3hiaoh+haEBSJFUlvqc9Yuo8ZalAyb8mfOeFY2aHq75veUFrKO44gfWpPlwsMMrryzcDAIWHSInFW9i0qM8RFfdz9kHrGR46qvW8OA00rLxx2KJY4Op9MnnOzkP+Jq1lKQ0rdX66GGwK61v0OYuScaw0xHgD/kJmtfkHklFTqZSuaSFaYNBizEHuxMDlOFlkZR3Nq8UQzU9isHWB630C1HhWvg8zi94YknJgj6ooqbkpZ5ljHO0ovRbS1iedYo2+UfphO4CBohmT4zXvNOcINWnIBPwsjZ9ifxazrd/XVuNQEhTTiIdIH9iHr/Mo016h8465/amxgPRwUuKpJQviZN8HnKCdhpItc4YOgnYXSnv2CVKzdPE+332swIAHwR5g7pEn9+FxY8Tsz0l/r7HRPb60yQ9SagAAJ9kJr6/rMPJeVtpWS1/pkO4Ey+x2vk9cWraf67l+w5ItOVgJbOj6zH/MCURtj7rDfqBtekaSoK6WLO0xt1V+karcKu8++PQwNIMJY8XKToMZ5E3shelVoiLPwzF2nRKtUQGeDEaapAXlPA/8hXeYhIOffZU/TFFWL2N5pOm4stM1Cah7XLnBnezzTJg9eFpyRlPTXByQN+LhDHK3c388H8pAo7v36s5SiTxlkE+6Ca3fFqHQu6Cs=" />
 
         <service
             android:name="com.here.android.mpa.service.MapService"
@@ -115,7 +115,11 @@
         <activity
             android:name=".MenuConfiguracion"
             android:label="@string/title_activity_menu_configuracion" >
-        </activity>
+        </activity><!-- ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information. -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
     </application>
 
 </manifest>

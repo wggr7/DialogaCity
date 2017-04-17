@@ -2,17 +2,16 @@ package com.jayktec.DialogaCity;
 
 import android.app.ActivityManager;
 import android.app.Dialog;
-import android.app.DownloadManager;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.media.MediaPlayer;
+import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +22,11 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import com.here.android.mpa.cluster.ClusterLayer;
 import com.here.android.mpa.common.GeoCoordinate;
@@ -46,9 +50,10 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class ActividadMapaCityWowzer extends ActionBarActivity  {
+public class ActividadMapaCityWowzer extends ActionBarActivity {
     private Map miMapa = null;
     private ClusterLayer clusterLayer;
+    private ClusterLayer clus;
     private MapFragment fragmentoMapa = null;
     private BDControler bdlocal;
     private ArrayList<Denuncia> arregloDenuncias;
@@ -71,26 +76,30 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
 
     //variables del broadcasting
     private IntentFilter filter;
-    private  DataActualReceiver rcv;
+    private DataActualReceiver rcv;
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Notificacion= getIntent().getIntExtra("Notificacion",0);
+        Notificacion = getIntent().getIntExtra("Notificacion", 0);
 
         setContentView(R.layout.activity_actividad_mapa_city_wowzer);
         miContexto = ActividadMapaCityWowzer.this;
         bdlocal = new BDControler(this, 1);
         Integer idDenunciaLast = bdlocal.devolverIdUltimaDenuncia();
-       // Log.i("ULTIMA DENUNCIA:", " " + idDenunciaLast.toString());
+        // Log.i("ULTIMA DENUNCIA:", " " + idDenunciaLast.toString());
 
         usuarioWowzer = bdlocal.devolverAliasUsrLogueado();
         iDUsuarioWow = bdlocal.devolverIDUsrLogueado();
         // comprobar que hay un usuario conectado o enviarlo a loguearse obligatoriamente
-        if (usuarioWowzer=="X")
-        {
+        if (usuarioWowzer == "X") {
             finish();
-            Intent inicio = new Intent(getApplicationContext(), com.jayktec.DialogaCity.LoginCityWowzer.class);
+            Intent inicio = new Intent(getApplicationContext(), LoginCityWowzer.class);
             inicio.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
             startActivity(inicio);
@@ -101,17 +110,16 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
         Log.i("ws ulden:", " " + control);
         Integer DenWow = 0;
         Log.i("ws ulden:", " " + control);
-       // DenunciaMysqlWs cargaDenuncia = new DenunciaMysqlWs(ActividadMapaCityWowzer.this);
+        // DenunciaMysqlWs cargaDenuncia = new DenunciaMysqlWs(ActividadMapaCityWowzer.this);
         // se verifica si es la primera vez , si es asi se deben traer todos los registros
-        int temp=iDUsuarioWow;
-        int temp1=control;
+        int temp = iDUsuarioWow;
+        int temp1 = control;
 
-        if(bdlocal.primeraVez())
-        {
-            temp1=0;
+        if (bdlocal.primeraVez()) {
+            temp1 = 0;
             temp = 0;
         }
-         Integer [] lista = {temp1,temp};
+        Integer[] lista = {temp1, temp};
 
         //cargaDenuncia.execute(lista);
 
@@ -125,12 +133,12 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
         fragmentoMapa.init(new OnEngineInitListener() {
             @Override
             public void onEngineInitializationCompleted(Error error) {
-                if (error == OnEngineInitListener.Error.NONE) {
+                if (error == Error.NONE) {
                     miMapa = fragmentoMapa.getMap();
                     PositioningManager.getInstance().start(PositioningManager.LocationMethod.GPS_NETWORK);
                     fragmentoMapa.getMapGesture().addOnGestureListener(new MyOnGestureListener());
 
-                    clusterLayer= new ClusterLayer();
+                    clusterLayer = new ClusterLayer();
                     //clusterLayer.setTheme(BasicClusterStyle);
                     miMapa.addClusterLayer(clusterLayer);
                     SimpleDateFormat laHora = new SimpleDateFormat("HH");
@@ -146,15 +154,11 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
                     //Log.i("not lat  ",""+ getIntent().getDoubleExtra("Latitud",0) );
                     //Log.i("not long",""+ getIntent().getDoubleExtra("Longitud",0) );
 
-                    if (Notificacion==1)
-                    {
-                        Notificacion=0;
-                        miMapa.setCenter(new GeoCoordinate(getIntent().getDoubleExtra("Latitud",miLatitud),getIntent().getDoubleExtra("Longitud",miLongitud), 0.0), Map.Animation.NONE);
+                    if (Notificacion == 1) {
+                        Notificacion = 0;
+                        miMapa.setCenter(new GeoCoordinate(getIntent().getDoubleExtra("Latitud", miLatitud), getIntent().getDoubleExtra("Longitud", miLongitud), 0.0), Map.Animation.NONE);
 
-                    }
-
-                    else
-                    {
+                    } else {
                         miMapa.setCenter(new GeoCoordinate(ubicacionGPS.getMiLatitud(), ubicacionGPS.getMiLongitud(), 0.0), Map.Animation.NONE);
                     }
                     miMapa.setZoomLevel(16.5);
@@ -166,7 +170,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
 
                     arregloDenuncias = bdlocal.obtenerTodasLasDenuncias();
 
-                    for (int i=0;i< arregloDenuncias.size();i++){
+                    for (int i = 0; i < arregloDenuncias.size(); i++) {
                         colocarMarcador(arregloDenuncias.get(i).getLatitud(),
                                 arregloDenuncias.get(i).getLongitud(),
                                 //28/09/2015 yle
@@ -213,7 +217,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
                 Bundle grupoDatos = new Bundle();
                 grupoDatos.putInt("IDWowzer", iDUsuarioWow);
                 grupoDatos.putString("AliasWowzer", usuarioWowzer);
-                Intent miIntent = new Intent(getApplicationContext(), com.jayktec.DialogaCity.ListadoDenuncias.class);
+                Intent miIntent = new Intent(getApplicationContext(), ListadoDenuncias.class);
                 miIntent.putExtras(grupoDatos);
                 miIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
@@ -222,11 +226,11 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
             }
 
         });
-        ImageButton botonConfiguracion = (ImageButton)findViewById(R.id.botonMenuOpciones);
+        ImageButton botonConfiguracion = (ImageButton) findViewById(R.id.botonMenuOpciones);
         botonConfiguracion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentConfig = new Intent(getApplicationContext(), com.jayktec.DialogaCity.MenuConfiguracion.class);
+                Intent intentConfig = new Intent(getApplicationContext(), MenuConfiguracion.class);
                 intentConfig.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 startActivity(intentConfig);
@@ -234,26 +238,28 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
         });
 
         //yle 9-11/2015
-    //    comprobarServicios();
+        //    comprobarServicios();
 /*
         filter = new IntentFilter();
         filter.addAction(ServicioSincronizacion.REFRESH_DATA_INTENT);
         rcv = new DataActualReceiver();
         registerReceiver(rcv, filter);
 */
-     }
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
 
     @Override
     public void onResume() {
         super.onResume();
-    //  registerReceiver(rcv,filter);
+        //  registerReceiver(rcv,filter);
         if (fragmentoMapa.isResumed()) {
             PositioningManager.getInstance().start(PositioningManager.LocationMethod.GPS_NETWORK);
         }
-        if (bdlocal.devolverAliasUsrLogueado()=="X")
-        {
+        if (bdlocal.devolverAliasUsrLogueado() == "X") {
             finish();
-            Intent inicio = new Intent(getApplicationContext(), com.jayktec.DialogaCity.LoginCityWowzer.class);
+            Intent inicio = new Intent(getApplicationContext(), LoginCityWowzer.class);
             inicio.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(inicio);
 
@@ -270,7 +276,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
         comprobarServicios();
         // limpiar notificaciones
         bdlocal.depurarNotificaciones();
-  //      unregisterReceiver(rcv);
+        //      unregisterReceiver(rcv);
 
 
     }
@@ -293,7 +299,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
         if (ubicacionGPS.obtenerLocalizacionOnline()) {
             miLatitud = ubicacionGPS.getMiLatitud();
             miLongitud = ubicacionGPS.getMiLongitud();
-         //   Log.i("GPS_T", "Online");
+            //   Log.i("GPS_T", "Online");
         } else {
             ubicacionGPS.obtenerLocalizacionOffline();
             miLatitud = ubicacionGPS.getMiLatitud();
@@ -304,6 +310,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity  {
 
     /**
      * Activa el Dialogo que muestra el menu
+     *
      * @param latitud  Latitud de donde se va a centrar el mapa y colocar el Marcador
      * @param longitud Longtidu en el cual se va a centrar el mapa y colocar el Marcador
      */
@@ -426,7 +433,7 @@ actividad cultural 9
                 SimpleDateFormat formatoFecha = new SimpleDateFormat("MM-dd-yyyy");
                 Denuncia unaDenuncia = new Denuncia();
                 unaDenuncia.setIdWowzer(iDUsuarioWow);
-              //  Log.i("ID_USUARIO:", "" + iDUsuarioWow);
+                //  Log.i("ID_USUARIO:", "" + iDUsuarioWow);
                 unaDenuncia.setIdDenWow(0);
                 unaDenuncia.setWowzer(usuarioWowzer);
                 unaDenuncia.setFechaDenuncia(formatoFecha.format(new Date()));
@@ -453,12 +460,12 @@ actividad cultural 9
                 DenunciaWs guardaDenunciaMysql = new DenunciaWs(ActividadMapaCityWowzer.this);
                 Denuncia[] lista = {unaDenuncia};
                 guardaDenunciaMysql.execute(lista);
-               // Log.i("ID Adentro:", "" + idDen.intValue());
+                // Log.i("ID Adentro:", "" + idDen.intValue());
                 //28/09/2015 yle
 
                 colocarMarcador(miLatitud, miLongitud, idDen.intValue(), usuarioWowzer, laDenuncia, "P");
 
-                            //Fin YLE
+                //Fin YLE
                 ventanaAgregarDenuncia.dismiss();
             }
         });
@@ -467,7 +474,7 @@ actividad cultural 9
             @Override
             public void onClick(View v) {
                 Intent intentCamara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-               intentCamara.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                intentCamara.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
                 startActivityForResult(intentCamara, SOLICITUD_DE_FOTO);
             }
@@ -482,12 +489,11 @@ actividad cultural 9
         ventanaAgregarDenuncia.show();
     }
 
-private void actualizarMarcador()
-{
+    private void actualizarMarcador() {
 //miMapa.removeMapObject();
 
-    //MapObject marcador= miMapa.
-}
+        //MapObject marcador= miMapa.
+    }
 
     /**
      * Metodo Comun para colocar un marcador en el mapa
@@ -500,7 +506,7 @@ private void actualizarMarcador()
      * @param estado        Estado de la denuncia
      */
     private void colocarMarcador(Double latitud, Double longitud, int idDenuncia, String usuarioWowzer, int tipo, String estado) {
-       // Log.i("COLOCAR_M:", "Lat:" + latitud + " Lon:" + longitud + " ID:" + idDenuncia + " WOW" + usuarioWowzer);
+        // Log.i("COLOCAR_M:", "Lat:" + latitud + " Lon:" + longitud + " ID:" + idDenuncia + " WOW" + usuarioWowzer);
         //Log.i("COLOCAR_M:", "tipo:" + tipo + " estado:" + estado);
         MapMarker marcador = new MapMarker();
         marcador.setCoordinate(new GeoCoordinate(latitud, longitud, 0.0));
@@ -549,11 +555,11 @@ actividad cultural 9
                     case 6:
                         miIcono.setImageResource(R.drawable.malolor_hotspot_cerrado);
                         break;
-                    case 7 :
+                    case 7:
                         miIcono.setImageResource(R.drawable.recreacion);
-                    case 8 :
+                    case 8:
                         miIcono.setImageResource(R.drawable.deportes);
-                    case 9 :
+                    case 9:
                         miIcono.setImageResource(R.drawable.arteycultura);
                 }
             } else {
@@ -576,11 +582,11 @@ actividad cultural 9
                     case 6:
                         miIcono.setImageResource(R.drawable.malolor_hotspot_activo);
                         break;
-                    case 7 :
+                    case 7:
                         miIcono.setImageResource(R.drawable.recreacion);
-                    case 8 :
+                    case 8:
                         miIcono.setImageResource(R.drawable.deportes);
-                    case 9 :
+                    case 9:
                         miIcono.setImageResource(R.drawable.arteycultura);
 
                 }
@@ -633,6 +639,42 @@ actividad cultural 9
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("ActividadMapaCityWowzer Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
 
     /**
@@ -690,7 +732,7 @@ actividad cultural 9
                     datosIdWowzer = hotspot.getDescription();
                     idDenuncia = obtenerIdDenuncia(datosIdWowzer);
                     wowzer = obtenerUsuarioDenuncia(datosIdWowzer);
-                    Intent miDenuncia = new Intent(getApplicationContext(), com.jayktec.DialogaCity.DenunciaActivity.class);
+                    Intent miDenuncia = new Intent(getApplicationContext(), DenunciaActivity.class);
                     Bundle grupoDatos = new Bundle();
                     grupoDatos.putInt("Notificacion", 0);
                     grupoDatos.putInt("IDUsuarioWow", iDUsuarioWow);
@@ -786,14 +828,11 @@ actividad cultural 9
     /**
      * Revisa si los servicios de la aplicacion se estan ejecutando y de no ser asi los enciende
      */
-    private void comprobarServicios()
-    {
-        Class[] lista={ServicioSincronizacion.class,ServicioNotificacion.class};
+    private void comprobarServicios() {
+        Class[] lista = {ServicioSincronizacion.class, ServicioNotificacion.class};
 
-        for (int i=0 ;i<lista.length;i++ )
-        {
-            if (!isMyServiceRunning(lista[i]))
-            {
+        for (int i = 0; i < lista.length; i++) {
+            if (!isMyServiceRunning(lista[i])) {
                 // Log.i("enc serv",lista[i].toString());
                 encenderServicio(lista[i]);
             }
@@ -802,6 +841,7 @@ actividad cultural 9
 
     /**
      * Revisa si se esta ejecutando o no un servicio
+     *
      * @param serviceClass recibe el nombre del servicio para saber si esta funcionando
      * @return devuelve verdader o falso según sea el caso
      */
@@ -817,18 +857,17 @@ actividad cultural 9
 
     /**
      * Enciendo un servicio
+     *
      * @param serviceClass nombre del servicio a encender
      * @return el estado del servicio.
      */
-    private boolean encenderServicio(Class<?> serviceClass){
+    private boolean encenderServicio(Class<?> serviceClass) {
         try {
             Intent service = new Intent(this, serviceClass);
             service.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startService(service);
-            return   true;
-        }
-        catch (Exception e)
-        {
+            return true;
+        } catch (Exception e) {
             Log.i("error enc serv", e.getMessage().toString());
             return false;
         }
@@ -836,39 +875,37 @@ actividad cultural 9
 
     /**
      * Actualiza los marcadores actualizados
+     *
      * @param id_denuncia
      */
     public void cambiarMarcador(int id_denuncia) {
 
-                boolean encontrado=false;
-                Collection<MapMarker> marcadores= clusterLayer.getMarkers();
-                Iterator<MapMarker> bucleMarcadores= marcadores.iterator();
-                MapMarker marcador = new MapMarker();
-                while   (bucleMarcadores.hasNext()|| encontrado)
-                {
-                    marcador= bucleMarcadores.next();
-                    String descripcion=marcador.getDescription();
+        boolean encontrado = false;
+        Collection<MapMarker> marcadores = clusterLayer.getMarkers();
+        Iterator<MapMarker> bucleMarcadores = marcadores.iterator();
+        MapMarker marcador = new MapMarker();
+        while (bucleMarcadores.hasNext() || encontrado) {
+            marcador = bucleMarcadores.next();
+            String descripcion = marcador.getDescription();
 //                    marcador.setDescription("#ID#" + idDenuncia + "#WOWZER#" + usuarioWowzer);
-                    Log.i("descripcion",descripcion);
-                    descripcion=descripcion.substring(0,3);
-                    Log.i("descripcion",descripcion);
-                    int idmarcador=Integer.parseInt(descripcion.substring(0,descripcion.indexOf("#")));
-                    if (idmarcador==id_denuncia)
-                    {
-                        encontrado=true;
-                    }
-
-                }
-
-                if (encontrado==true)
-                {
-                    clusterLayer.removeMarker(marcador);
-                    Denuncia denuncia= bdlocal.obtenerLaDenuncia(id_denuncia);
-                    colocarMarcador(denuncia.getLatitud(),denuncia.getLongitud(),id_denuncia,denuncia.getWowzer(),denuncia.getTipoDenuncia(),denuncia.getEstadoDenuncia());
-                }
-
-
+            Log.i("descripcion", descripcion);
+            descripcion = descripcion.substring(0, 3);
+            Log.i("descripcion", descripcion);
+            int idmarcador = Integer.parseInt(descripcion.substring(0, descripcion.indexOf("#")));
+            if (idmarcador == id_denuncia) {
+                encontrado = true;
             }
+
+        }
+
+        if (encontrado == true) {
+            clusterLayer.removeMarker(marcador);
+            Denuncia denuncia = bdlocal.obtenerLaDenuncia(id_denuncia);
+            colocarMarcador(denuncia.getLatitud(), denuncia.getLongitud(), id_denuncia, denuncia.getWowzer(), denuncia.getTipoDenuncia(), denuncia.getEstadoDenuncia());
+        }
+
+
+    }
 }
 
 

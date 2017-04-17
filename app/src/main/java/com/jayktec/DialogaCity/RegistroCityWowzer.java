@@ -71,7 +71,7 @@ public class RegistroCityWowzer extends ActionBarActivity {
                 Log.i("Apellido:", registro.getApellido());
                 Log.i("Email:", registro.getEmail());
                 Log.i("Password:", registro.getPassword());
-                Log.i("Alias:", registro.getId_wowzer());
+                Log.i("login:", registro.getId_wowzer());
                 Log.i("Estado Civil:", registro.getEstado_civil());
                 Log.i("Sexo:", registro.getSexo());
                 Registro[] arrRegistro = {registro};
