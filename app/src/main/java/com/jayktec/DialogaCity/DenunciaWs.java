@@ -45,6 +45,7 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
         BDControler BDLocal = new BDControler(actividad.getApplicationContext(),1);
         SoapObject resultsRequestSOAP;
         Denuncia denuncia = params[0];
+
         final String NAMESPACE = "http://AppMobile/";
         final String URL="http://www.jayktec.com.ve:8080/AplicacionWebServices/UsuarioMobile?wsdl";
         //Prueba imagen
@@ -128,7 +129,7 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
             result = false;
         }
         catch (IOException e) {
-            Log.i("wsSOAPFAULT", "acax fallo");//(String) e.printStackTrace());
+            Log.i("wsSOAPFAULT", "acax fallo :"+e);//(String) e.printStackTrace());
 
             //System.out.println("IOEXCEPTION====");
             //e.printStackTrace();

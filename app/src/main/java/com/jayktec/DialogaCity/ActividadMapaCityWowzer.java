@@ -206,8 +206,11 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
         botonWoozie.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Log.i("ws", "estoy aquiiiiiiiiii1");
                 ubicarPosicion();
-                levantarDialogoMenu(miLatitud, miLongitud);
+                // TODO descomentar levantarDialogoMenu(miLatitud, miLongitud);
+                levantarDialogoMenu(100.0, 100.0);
+                Log.i("ws", "estoy aquiiiiiiiiii2");
             }
         });
         ImageButton botonListar = (ImageButton) findViewById(R.id.botonListarDenuncias);
@@ -269,8 +272,8 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
 
     @Override
     public void onPause() {
-        PositioningManager.getInstance().stop();
-        ubicacionGPS.detenerGPS();
+//TODO descomentar        PositioningManager.getInstance().stop();
+// TODO descomentar ubicacionGPS.detenerGPS();
         super.onPause();
         //yle 9-11/2015
         comprobarServicios();
@@ -315,8 +318,8 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
      * @param longitud Longtidu en el cual se va a centrar el mapa y colocar el Marcador
      */
     private void levantarDialogoMenu(Double latitud, Double longitud) {
-        miMapa.setCenter(new GeoCoordinate(latitud, longitud, 0.0), Map.Animation.NONE);
-        miMapa.setZoomLevel(16.5);
+//TODO descomentar        miMapa.setCenter(new GeoCoordinate(latitud, longitud, 0.0), Map.Animation.NONE);
+// TODO descomentar      miMapa.setZoomLevel(16.5);
 /* tipos de denuncias
 
 SEMAFORO	1
@@ -599,7 +602,7 @@ actividad cultural 9
         marcador.setDescription("#ID#" + idDenuncia + "#WOWZER#" + usuarioWowzer);
         marcador.setVisible(true);
         //miMapa.addMapObject(marcador);
-        clusterLayer.addMarker(marcador);
+//TODO descomentar        clusterLayer.addMarker(marcador);
     }
 
     /**
