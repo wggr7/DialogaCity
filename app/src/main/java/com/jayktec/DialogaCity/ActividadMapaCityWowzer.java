@@ -443,13 +443,16 @@ actividad cultural 9
                 unaDenuncia.setLatitud(miLatitud);
                 unaDenuncia.setLongitud(miLongitud);
                 unaDenuncia.setTipoDenuncia(laDenuncia);
-                unaDenuncia.setEstadoDenuncia("P");
+                unaDenuncia.setEstadoDenuncia("1");
                 unaDenuncia.setComentarios(TVComentarios.getText().toString());
                 if (fotoDenuncia != null) {
                     streamDatosFotos = new ByteArrayOutputStream();
                     fotoDenuncia.compress(Bitmap.CompressFormat.JPEG, 100, streamDatosFotos);
                     byte[] arregloBytes = streamDatosFotos.toByteArray();
                     unaDenuncia.setImagen(arregloBytes);
+                }
+                else{
+                    unaDenuncia.setImagen(null);
                 }
                 unaDenuncia.setRating(0.0);
                 unaDenuncia.setFecha_ult_actualizacion(formatoFecha.format(new Date()));

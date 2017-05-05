@@ -4,13 +4,31 @@ import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.kobjects.base64.Base64;
 import org.ksoap2.SoapEnvelope;
 import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.SoapObject;
 import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -46,6 +64,116 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
         SoapObject resultsRequestSOAP;
         Denuncia denuncia = params[0];
 
+
+    /*    Log.i("ws",denuncia.getIdDenuncia().toString());
+        Log.i("ws",denuncia.getIdWowzer().toString());
+        Log.i("ws",String.valueOf(denuncia.getTipoDenuncia()));
+        Log.i("ws",denuncia.getFechaDenuncia());
+        Log.i("ws",denuncia.getComentarios() );
+        Log.i("ws",denuncia.getEstadoDenuncia() );
+        Log.i("ws",denuncia.getRating().toString() );
+
+        Log.i("ws",String.valueOf(denuncia.getImagen()));
+
+
+        Log.i("ws","aqui se parte");
+
+*/
+
+
+        JSONObject jsonObj = new JSONObject();
+        try {
+            jsonObj.put("DenWowzer", denuncia.getIdWowzer());
+            jsonObj.put("DenTipo", denuncia.getTipoDenuncia());
+            jsonObj.put("DenDescripcion", denuncia.getComentarios());
+            jsonObj.put("DenEstado", denuncia.getEstadoDenuncia());
+            jsonObj.put("DenLongitud", denuncia.getEstadoDenuncia());
+            jsonObj.put("DenLatitud", denuncia.getEstadoDenuncia());
+            jsonObj.put("DenValoracion", denuncia.getRating().toString());
+            if(denuncia.getImagen()==null) {
+                jsonObj.put("DenImagen", "");
+            }
+            else{
+                jsonObj.put("DenImagen", Base64.encode(denuncia.getImagen()));
+            }
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.i("ws", jsonObj.toString());
+
+        URL url;
+        HttpURLConnection connection = null;
+        try {
+            url = new URL("http://jayktec.com.ve/DialogaWeb/servicios/Denunciar");
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setDoOutput(true);
+            connection.setRequestProperty("Denuncia", jsonObj.toString());
+            connection.setRequestMethod("POST"); // hear you are telling that it is a POST request, which can be changed into "PUT", "GET", "DELETE" etc.
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8"); // here you are setting the `Content-Type` for the data you are sending which is `application/json`
+
+
+            //Send request
+            List<NameValuePair> params1 = new ArrayList<NameValuePair>();
+            params1.add(new BasicNameValuePair("Denuncia", jsonObj.toString()));
+
+
+
+            OutputStream os = connection.getOutputStream();
+            BufferedWriter writer = new BufferedWriter(
+                    new OutputStreamWriter(os, "UTF-8"));
+            writer.write(getQuery(params1));
+            writer.flush();
+            writer.close();
+            os.close();
+
+            connection.connect();
+
+            StringBuffer sb = new StringBuffer();
+
+            int response = connection.getResponseCode();
+
+            Log.i("ws", connection.getResponseMessage());
+
+            if (response >= 200 && response <=399) {
+                Log.i("ws", connection.getContent().toString());
+                InputStream is = new BufferedInputStream(connection.getInputStream());
+                BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                String inputLine = "";
+                while ((inputLine = br.readLine()) != null) {
+                    sb.append(inputLine);
+                }
+                Log.i("ws",sb.toString());
+       /*         JSONObject jsonresp = new JSONObject(sb.toString());
+                idDenuncia= jsonresp.getInt("idDenuncia");
+
+                BDLocal.actualizaDenunciaInsercion(denuncia,idDenuncia);
+                result=true;
+*/
+            }
+            else{
+                Log.i("ws", "response incorrecta");
+            }
+
+
+
+
+    } catch (Exception e) {
+
+        e.printStackTrace();
+        result= false;
+
+    } finally {
+
+        if(connection != null) {
+            connection.disconnect();
+        }
+    }
+
+/*
+
+
+
         final String NAMESPACE = "http://AppMobile/";
         final String URL="http://www.jayktec.com.ve:8080/AplicacionWebServices/UsuarioMobile?wsdl";
         //Prueba imagen
@@ -61,7 +189,8 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
        DenunciaXml mensaje = new DenunciaXml(denuncia);
        request.addProperty("denuncia", mensaje);
         //  request.addProperty("imgBytes", Base64.encode(denuncia.getImagen()));
-
+        Log.i("ws","aqui se parte");
+        Log.i("ws", (String) mensaje.getProperty(3));
 
         Log.i("WS_DENUNCIA", "ya anadi las propiedades");
         Log.i("WS_DENUNCIA", request.toString());
@@ -146,11 +275,29 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
           //  Log.i("ws error:",e.getCause().toString());//e.getMessage().toString());
             result = false;
         }
-
+*/
         return result;
     }
 
+    private String getQuery(List<NameValuePair> params) throws UnsupportedEncodingException
+    {
+        StringBuilder result = new StringBuilder();
+        boolean first = true;
 
+        for (NameValuePair pair : params)
+        {
+            if (first)
+                first = false;
+            else
+                result.append("&");
+
+            result.append(URLEncoder.encode(pair.getName(), "UTF-8"));
+            result.append("=");
+            result.append(URLEncoder.encode(pair.getValue(), "UTF-8"));
+        }
+
+        return result.toString();
+    }
     protected void onPostExecute(Boolean result) {
 
         if (result)

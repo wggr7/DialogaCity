@@ -48,13 +48,13 @@ public class DenunciaXml  implements KvmSerializable {
             case 3:
                 if (den.getImagen()==null)
                 {
-                    Log.i("ws","imagen vacia");
+                    //Log.i("ws","imagen vacia");
 
                     return "";
                 }
                 else
                 {
-                    Log.i("ws","imagen llena");
+                    //Log.i("ws","imagen llena");
 
                     return Base64.encode(den.getImagen());
 
