@@ -144,12 +144,12 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
                     sb.append(inputLine);
                 }
                 Log.i("ws",sb.toString());
-       /*         JSONObject jsonresp = new JSONObject(sb.toString());
+                JSONObject jsonresp = new JSONObject(sb.toString());
                 idDenuncia= jsonresp.getInt("idDenuncia");
 
                 BDLocal.actualizaDenunciaInsercion(denuncia,idDenuncia);
                 result=true;
-*/
+
             }
             else{
                 Log.i("ws", "response incorrecta");
