@@ -23,6 +23,7 @@
         android:required="false" />
 
     <application
+        android:hardwareAccelerated="true"
         android:allowBackup="true"
         android:icon="@mipmap/logo"
         android:label="@string/app_name"
@@ -40,25 +41,9 @@
         </activity>
 
         <meta-data
-            android:name="com.here.android.maps.appid"
-            android:value="9O9uVPKqxzGWj4Xrnq8n"/>
+            android:name="com.here.android.maps.appid" android:value="k4tsKiO3lb8zBFRmv56V"/>
         <meta-data
-            android:name="com.here.android.maps.apptoken"
-            android:value="mHp3J56eRSM0i5GnFHrx-g" />
-        <meta-data
-            android:name="com.here.android.maps.license.key"
-            android:value="dfzrMOCT5Juu+ptdkxlELqM3hiaoh+haEBSJFUlvqc9Yuo8ZalAyb8mfOeFY2aHq75veUFrKO44gfWpPlwsMMrryzcDAIWHSInFW9i0qM8RFfdz9kHrGR46qvW8OA00rLxx2KJY4Op9MnnOzkP+Jq1lKQ0rdX66GGwK61v0OYuScaw0xHgD/kJmtfkHklFTqZSuaSFaYNBizEHuxMDlOFlkZR3Nq8UQzU9isHWB630C1HhWvg8zi94YknJgj6ooqbkpZ5ljHO0ovRbS1iedYo2+UfphO4CBohmT4zXvNOcINWnIBPwsjZ9ifxazrd/XVuNQEhTTiIdIH9iHr/Mo016h8465/amxgPRwUuKpJQviZN8HnKCdhpItc4YOgnYXSnv2CVKzdPE+332swIAHwR5g7pEn9+FxY8Tsz0l/r7HRPb60yQ9SagAAJ9kJr6/rMPJeVtpWS1/pkO4Ey+x2vk9cWraf67l+w5ItOVgJbOj6zH/MCURtj7rDfqBtekaSoK6WLO0xt1V+karcKu8++PQwNIMJY8XKToMZ5E3shelVoiLPwzF2nRKtUQGeDEaapAXlPA/8hXeYhIOffZU/TFFWL2N5pOm4stM1Cah7XLnBnezzTJg9eFpyRlPTXByQN+LhDHK3c388H8pAo7v36s5SiTxlkE+6Ca3fFqHQu6Cs=" />
-
-        <service
-            android:name="com.here.android.mpa.service.MapService"
-            android:exported="true"
-            android:label="HereMapService"
-            android:process="global.Here.Map.Service.v2" >
-            <intent-filter>
-                <action android:name="com.here.android.mpa.service.MapService" >
-                </action>
-            </intent-filter>
-        </service>
+            android:name="com.here.android.maps.apptoken" android:value="jLB4U6WxEltWHstXMhoPNQ"/>
 
         <service
             android:name=".GPSTracker"

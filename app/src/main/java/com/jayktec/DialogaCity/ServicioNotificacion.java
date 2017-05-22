@@ -84,7 +84,6 @@ public class ServicioNotificacion extends Service {
                         if (!bdlocal.primeraVez()){
                         ArrayList<Notificacion> arregloNotificacion = bdlocal.obtenerNotificaciones();
 
-
                         if (arregloNotificacion.size()>0)
                         {
                             NotificationManager nm = (NotificationManager)  getSystemService(NOTIFICATION_SERVICE);

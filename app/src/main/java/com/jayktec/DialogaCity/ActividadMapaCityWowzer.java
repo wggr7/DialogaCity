@@ -28,7 +28,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.appindexing.Thing;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import com.here.android.mpa.cluster.ClusterLayer;
+
 import com.here.android.mpa.common.GeoCoordinate;
 import com.here.android.mpa.common.Image;
 import com.here.android.mpa.common.OnEngineInitListener;
@@ -52,8 +52,7 @@ import java.util.List;
 
 public class ActividadMapaCityWowzer extends ActionBarActivity {
     private Map miMapa = null;
-    private ClusterLayer clusterLayer;
-    private ClusterLayer clus;
+
     private MapFragment fragmentoMapa = null;
     private BDControler bdlocal;
     private ArrayList<Denuncia> arregloDenuncias;
@@ -138,13 +137,13 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
                     PositioningManager.getInstance().start(PositioningManager.LocationMethod.GPS_NETWORK);
                     fragmentoMapa.getMapGesture().addOnGestureListener(new MyOnGestureListener());
 
-                    clusterLayer = new ClusterLayer();
+               /*     clusterLayer = new ClusterLayer();
                     //clusterLayer.setTheme(BasicClusterStyle);
-                    miMapa.addClusterLayer(clusterLayer);
+                    miMapa.addClusterLayer(clusterLayer);*/
                     SimpleDateFormat laHora = new SimpleDateFormat("HH");
                     int hora = Integer.parseInt(laHora.format(Calendar.getInstance().getTime()));
                     if (hora > 17 || hora < 7) {
-                        miMapa.setMapScheme(Map.Scheme.NORMAL_NIGHT);
+                        miMapa.setMapScheme(Map.Scheme.NORMAL_DAY);
                     } else {
                         miMapa.setMapScheme(Map.Scheme.NORMAL_DAY);
                     }
@@ -208,8 +207,8 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
             public void onClick(View v) {
                 Log.i("ws", "estoy aquiiiiiiiiii1");
                 ubicarPosicion();
-                // TODO descomentar levantarDialogoMenu(miLatitud, miLongitud);
-                levantarDialogoMenu(100.0, 100.0);
+                levantarDialogoMenu(miLatitud, miLongitud);
+                //levantarDialogoMenu(100.0, 100.0);
                 Log.i("ws", "estoy aquiiiiiiiiii2");
             }
         });
@@ -272,8 +271,8 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
 
     @Override
     public void onPause() {
-//TODO descomentar        PositioningManager.getInstance().stop();
-// TODO descomentar ubicacionGPS.detenerGPS();
+   PositioningManager.getInstance().stop();
+ubicacionGPS.detenerGPS();
         super.onPause();
         //yle 9-11/2015
         comprobarServicios();
@@ -318,8 +317,8 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
      * @param longitud Longtidu en el cual se va a centrar el mapa y colocar el Marcador
      */
     private void levantarDialogoMenu(Double latitud, Double longitud) {
-//TODO descomentar        miMapa.setCenter(new GeoCoordinate(latitud, longitud, 0.0), Map.Animation.NONE);
-// TODO descomentar      miMapa.setZoomLevel(16.5);
+       miMapa.setCenter(new GeoCoordinate(latitud, longitud, 0.0), Map.Animation.NONE);
+    miMapa.setZoomLevel(16.5);
 /* tipos de denuncias
 
 SEMAFORO	1
@@ -604,7 +603,7 @@ actividad cultural 9
         }
         marcador.setDescription("#ID#" + idDenuncia + "#WOWZER#" + usuarioWowzer);
         marcador.setVisible(true);
-        //miMapa.addMapObject(marcador);
+        miMapa.addMapObject(marcador);
 //TODO descomentar        clusterLayer.addMarker(marcador);
     }
 
@@ -884,7 +883,7 @@ actividad cultural 9
      *
      * @param id_denuncia
      */
-    public void cambiarMarcador(int id_denuncia) {
+ /*   public void cambiarMarcador(int id_denuncia) {
 
         boolean encontrado = false;
         Collection<MapMarker> marcadores = clusterLayer.getMarkers();
@@ -905,13 +904,13 @@ actividad cultural 9
         }
 
         if (encontrado == true) {
-            clusterLayer.removeMarker(marcador);
+            //clusterLayer.removeMarker(marcador);
             Denuncia denuncia = bdlocal.obtenerLaDenuncia(id_denuncia);
             colocarMarcador(denuncia.getLatitud(), denuncia.getLongitud(), id_denuncia, denuncia.getWowzer(), denuncia.getTipoDenuncia(), denuncia.getEstadoDenuncia());
         }
 
 
-    }
+    }*/
 }
 
 

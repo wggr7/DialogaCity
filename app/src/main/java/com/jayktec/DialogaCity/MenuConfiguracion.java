@@ -40,12 +40,20 @@ public class MenuConfiguracion extends ActionBarActivity {
             @Override
             public void onClick(View v) {
 
-                bdlocal.limpiarIDUsrLogueadoConexion();
+             /*   bdlocal.limpiarIDUsrLogueadoConexion();
                 MediaPlayer     reproductor = MediaPlayer.create(MenuConfiguracion.this, R.raw.triste);
                 reproductor.start();
                 finish();
                 Intent intentLogin = new Intent(getApplicationContext(), com.jayktec.DialogaCity.LoginCityWowzer.class);
-                startActivity(intentLogin);
+                startActivity(intentLogin);*/
+
+                Log.i("ws", "estoy aquiiiiiiiiii1");
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("text/plain");
+                intent.putExtra(Intent.EXTRA_TEXT, "El mejor blog de android http://javaheros.blogspot.pe/");
+                intent.setPackage("com.facebook.katana");
+                Log.i("ws", "iniciando");
+                startActivity(intent);
 
             }
         });
@@ -71,6 +79,9 @@ public class MenuConfiguracion extends ActionBarActivity {
 
             }
         });
+
+
+
 
     }
 
