@@ -152,6 +152,7 @@ public class BDControler extends SQLiteOpenHelper {
         Cursor resultado = miBD.rawQuery("select * from " + TABLA_CONTROL + " where " + COLUMNA_CTRL_NOMBRE + "='PRIMERAVEZ'", null);
       //  Log.i("desvirgado?","entrando");
         resultado.moveToFirst();
+
         if (!resultado.isAfterLast()) {
             primera_vez = resultado.getInt(resultado.getColumnIndex(COLUMNA_VALOR_INT));
 
@@ -163,9 +164,60 @@ public class BDControler extends SQLiteOpenHelper {
         miBD.close();
         //Log.i("desvirgado?", resp.toString());
 
+
+
+
         return resp;
     }
 
+    /**
+     * Revisa si es  primera vez que ingresa a la aplicación con ese usuario
+     *
+     * @return
+     */
+    public Boolean primeraVezBdDenuncia() {
+
+        Boolean resp = false;
+
+        SQLiteDatabase miMD = this.getReadableDatabase();
+        ArrayList<Denuncia> arregloDenuncias = new ArrayList<>();
+        Cursor resultado = miMD.rawQuery("select * from " + TABLA_DENUNCIAS, null);
+        resultado.moveToFirst();
+
+        while (!resultado.isAfterLast()) {
+            Denuncia unaDenuncia = new Denuncia();
+            unaDenuncia.setVersion(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_VERSION)));
+            unaDenuncia.setIdDenWow(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ID_DEN_WOW)));
+            unaDenuncia.setIdDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ID)));
+            unaDenuncia.setIdWowzer(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ID_WOWZER)));
+            unaDenuncia.setWowzer(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_WOWZER)));
+            unaDenuncia.setFechaDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_FECHA)));
+            unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
+            unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
+            unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
+            unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
+            unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
+            unaDenuncia.setFecha_ult_actualizacion(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_FECHA_ULT_ACTUALIZACION)));
+
+            arregloDenuncias.add(unaDenuncia);
+            resultado.moveToNext();
+        }
+        resultado.close();
+        miMD.close();
+        if(arregloDenuncias.size()==0){
+            resp = true;
+
+        }else{
+            resp = false;
+        }
+
+
+
+        Log.i("ws", "primera vez"+resp.toString());
+        return resp;
+    }
 
     /**
      * Para ingresar una denuncia en la Base de datos
@@ -244,9 +296,9 @@ public class BDControler extends SQLiteOpenHelper {
         Boolean result = false;
         int contador = 0;
         ContentValues valoresDenuncia = new ContentValues();
-        //valoresDenuncia.put(COLUMNA_DENUNCIA_ID_DEN_WOW, unaDenuncia.getIdDenWow());
-        //valoresDenuncia.put(COLUMNA_DENUNCIA_ID, unaDenuncia.getIdDenuncia());
-        //valoresDenuncia.put(COLUMNA_DENUNCIA_ID_WOWZER, unaDenuncia.getIdWowzer());
+        valoresDenuncia.put(COLUMNA_DENUNCIA_ID_DEN_WOW, unaDenuncia.getIdDenWow());
+       // valoresDenuncia.put(COLUMNA_DENUNCIA_ID, unaDenuncia.getIdDenuncia());
+        valoresDenuncia.put(COLUMNA_DENUNCIA_ID_WOWZER, unaDenuncia.getIdWowzer());
         valoresDenuncia.put(COLUMNA_DENUNCIA_WOWZER, unaDenuncia.getWowzer());
         valoresDenuncia.put(COLUMNA_DENUNCIA_FECHA, unaDenuncia.getFechaDenuncia());
         valoresDenuncia.put(COLUMNA_DENUNCIA_LATITUD, unaDenuncia.getLatitud());
@@ -255,8 +307,9 @@ public class BDControler extends SQLiteOpenHelper {
         valoresDenuncia.put(COLUMNA_DENUNCIA_ESTADO, unaDenuncia.getEstadoDenuncia());
         valoresDenuncia.put(COLUMNA_DENUNCIA_COMENTARIO, unaDenuncia.getComentarios());
         valoresDenuncia.put(COLUMNA_DENUNCIA_RATING, unaDenuncia.getRating());
-        valoresDenuncia.put(COLUMNA_DENUNCIA_FECHA_ULT_ACTUALIZACION, unaDenuncia.getFecha_ult_actualizacion());
+        //valoresDenuncia.put(COLUMNA_DENUNCIA_FECHA_ULT_ACTUALIZACION, unaDenuncia.getFecha_ult_actualizacion());
         valoresDenuncia.put(COLUMNA_DENUNCIA_VERSION, unaDenuncia.getVersion());
+       // Log.i("ws actualizando", String.valueOf(unaDenuncia.getVersion()));
         if (Tipo == 1) {
             contador = miBD.update(TABLA_DENUNCIAS, valoresDenuncia, COLUMNA_DENUNCIA_ID + "=" + unaDenuncia.getIdDenuncia().toString(), null);
         } else if (Tipo == 2) {
@@ -264,6 +317,8 @@ public class BDControler extends SQLiteOpenHelper {
         }
         miBD.close();
         if (contador == 1) result = true;
+
+       // Log.i("ws actualizando", result.toString());
         return result;
     }
 
@@ -294,7 +349,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -347,7 +402,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -385,7 +440,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -422,7 +477,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -457,7 +512,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -487,7 +542,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -505,8 +560,12 @@ public class BDControler extends SQLiteOpenHelper {
         ArrayList<Denuncia> arregloDenuncias = new ArrayList<>();
         Cursor resultado = miMD.rawQuery("select * from " + TABLA_DENUNCIAS, null);
         resultado.moveToFirst();
+        //Log.i("ws BD", resultado.toString());
         while (!resultado.isAfterLast()) {
             Denuncia unaDenuncia = new Denuncia();
+            Log.i("ws BDVersion", String.valueOf(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_VERSION))));
+
+
             unaDenuncia.setVersion(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_VERSION)));
             unaDenuncia.setIdDenWow(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ID_DEN_WOW)));
             unaDenuncia.setIdDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ID)));
@@ -516,7 +575,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));
@@ -551,7 +610,7 @@ public class BDControler extends SQLiteOpenHelper {
             unaDenuncia.setLatitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LATITUD)));
             unaDenuncia.setLongitud(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_LONGITUD)));
             unaDenuncia.setTipoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_TIPO)));
-            unaDenuncia.setEstadoDenuncia(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
+            unaDenuncia.setEstadoDenuncia(resultado.getInt(resultado.getColumnIndex(COLUMNA_DENUNCIA_ESTADO)));
             unaDenuncia.setComentarios(resultado.getString(resultado.getColumnIndex(COLUMNA_DENUNCIA_COMENTARIO)));
             unaDenuncia.setImagen(resultado.getBlob(resultado.getColumnIndex(COLUMNA_DENUNCIA_IMAGEN)));
             unaDenuncia.setRating(resultado.getDouble(resultado.getColumnIndex(COLUMNA_DENUNCIA_RATING)));

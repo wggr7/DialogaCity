@@ -37,7 +37,7 @@ import java.util.List;
  */
 public class RegistroWs  extends AsyncTask<Registro,Void, Boolean> {
 
-    private int idRegistro;
+    private int idRegistro=0;
     private Activity actividad;
     private boolean result = false;
     private boolean trabajando= true;
@@ -134,12 +134,16 @@ public class RegistroWs  extends AsyncTask<Registro,Void, Boolean> {
                 while ((inputLine = br.readLine()) != null) {
                     sb.append(inputLine);
                 }
+                Log.i("ws",sb.toString());
+                Log.i("ws","ya imprimi"+sb.toString());
+                if(sb.toString()!=null){
 
-                JSONObject jsonObject = new JSONObject(sb.toString());
+                    JSONObject jsonObject = new JSONObject(sb.toString());
+                   idRegistro = jsonObject.getInt("idWowzer");
 
+
+                }
                 BDControler bdlocal = new BDControler(actividad,1);
-                idRegistro = jsonObject.getInt("idWowzer");
-
                 if (idRegistro !=0)
                     {
                         Log.i("ws","entre a intentar ");
@@ -153,6 +157,7 @@ public class RegistroWs  extends AsyncTask<Registro,Void, Boolean> {
                             }
                          else
                             {
+                                Log.i("ws","Problemas para Guardar los datos");
                                 Toast.makeText(actividad, "Problemas para Guardar los datos", Toast.LENGTH_LONG).show();
                                 result = false;
                             }
@@ -160,13 +165,18 @@ public class RegistroWs  extends AsyncTask<Registro,Void, Boolean> {
                     }
                 else
                     {
+                        Log.i("ws","usuario ya existente");
                         result = false;
-                        Toast.makeText(actividad, "Problemas para Guardar el Registro", Toast.LENGTH_LONG).show();
+
+                        Toast toast1 = Toast.makeText(actividad, "usuario ya existente", Toast.LENGTH_LONG);
+                        toast1.show();
+
                     }
 
 
             }
             else{
+                Log.i("ws","Problemas para comunicar ");
                 Toast.makeText(actividad, "Problemas para comunicar", Toast.LENGTH_LONG).show();
                 result = false;
             }

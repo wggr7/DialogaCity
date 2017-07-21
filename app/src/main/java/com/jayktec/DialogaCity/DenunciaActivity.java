@@ -20,6 +20,9 @@ import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by Usuario on 02-10-2015.
  */
@@ -39,6 +42,7 @@ public class DenunciaActivity extends Activity {
 
         idDenuncia= getIntent().getIntExtra("idDenuncia", 0);
         wowzer= getIntent().getStringExtra("wowzer");
+        Log.i("Ws wowzer", wowzer);
         iDUsuarioWow= getIntent().getIntExtra("IDUsuarioWow",0);
         Notificacion= getIntent().getIntExtra("Notificacion",0);
         if (Notificacion==1)
@@ -88,14 +92,29 @@ public class DenunciaActivity extends Activity {
             final Double elRating = unaDenuncia.getRating();
             final byte[] imagenDenuncia = unaDenuncia.getImagen();
             int posicion = unaDenuncia.getFechaDenuncia().indexOf("T");
+            String formatedDate=null;
             if (posicion <= 0){
-                TVFecha.setText(unaDenuncia.getFechaDenuncia());
+try {
+    long val = Long.valueOf(unaDenuncia.getFechaDenuncia());
+    Date fech = new Date(val);
+    SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+    formatedDate = newFormat.format(fech);
+    TVFecha.setText(formatedDate);
+}
+catch(Exception e){
+    TVFecha.setText(unaDenuncia.getFechaDenuncia());
+
+}
             }
             else{
-                TVFecha.setText(unaDenuncia.getFechaDenuncia().substring(0,posicion));
+                long val = Long.valueOf(unaDenuncia.getFechaDenuncia().substring(0,posicion));
+                Date fech = new Date(val);
+                SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+                formatedDate = newFormat.format(fech);
+                TVFecha.setText(formatedDate);
             }
             TVComentario.setText(unaDenuncia.getComentarios());
-            String elEstado = unaDenuncia.getEstadoDenuncia();
+            Integer elEstado = unaDenuncia.getEstadoDenuncia();
 
 
             if (imagenDenuncia != null) {
@@ -193,28 +212,28 @@ public class DenunciaActivity extends Activity {
 
             }
 
-            if (elEstado.isEmpty()) {
+      /*      if (elEstado.isEmpty()) {
                 elEstado = "X";
-            }
+            }*/
             switch (elEstado) {
-                case "P":
-                    TVEstado.setText("PENDIENTE");
+                case 1:
+                    TVEstado.setText("Creada");
                     ImViImagenProgreso.setImageResource(R.drawable.pendiente);
                     break;
-                case "P1":
-                    TVEstado.setText("INICIADO");
+                case 2:
+                    TVEstado.setText("En revision");
                     ImViImagenProgreso.setImageResource(R.drawable.enproceso1);
                     break;
-                case "P2":
-                    TVEstado.setText("EN TRABAJO");
+                case 3:
+                    TVEstado.setText("Procesada");
                     ImViImagenProgreso.setImageResource(R.drawable.enproceso2);
                     break;
-                case "R":
-                    TVEstado.setText("REALIZADO");
+                case 4:
+                    TVEstado.setText("Cerrada");
                     ImViImagenProgreso.setImageResource(R.drawable.realizado);
                     break;
                 default:
-                    TVEstado.setText("PENDIENTE");
+                    TVEstado.setText("Creada");
                     ImViImagenProgreso.setImageResource(R.drawable.pendiente);
                     break;
             }
@@ -240,11 +259,13 @@ public class DenunciaActivity extends Activity {
                             Log.i("imag elid",elID);
                             Log.i("imag idUsuarioWow",""+iDUsuarioWow);
                             Log.d("ws denuncia","abriendo los comentarios");
-
+                            Denuncia den=bdlocal.obtenerLaDenunciaWOW(Integer.parseInt(eliDenWow));
                             datosComentarios.putInt("IDDenuncia", bdlocal.obtenerLaDenuncia(Integer.parseInt(elID)).getIdDenWow());
                             datosComentarios.putInt("IDWowzer", bdlocal.devolverIDUsrLogueado());
                             datosComentarios.putInt("IDDenunciaWS", Integer.parseInt(eliDenWow));
                             datosComentarios.putString("ComentDenuncia", elComentario);
+                            datosComentarios.putString("DenWowzer", den.getWowzer());
+                            datosComentarios.putString("FechaDenuncia", den.getFechaDenuncia());
                             Intent miIntent = new Intent(getApplicationContext(), com.jayktec.DialogaCity.ListadoComentarios.class);
                             miIntent.putExtras(datosComentarios);
                             miIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -345,6 +366,15 @@ Log.d("ws denuncia","abriendo los comentarios");
             public void onClick(View v) {
                 String RTN = String.valueOf(barraEstrellas.getRating());
                 final Double elRating = Double.valueOf(RTN);
+                //TODO llamar al ws apoyar
+                ApoyarWs guardarApoyo=new ApoyarWs(DenunciaActivity.this);
+                SimpleDateFormat formatoFecha = new SimpleDateFormat("MM-dd-yyyy");
+                formatoFecha.format(new Date());
+                String str=String.valueOf(iDUsuarioWow);
+
+                String[] parametros={elID,str,elRating.toString()};
+                guardarApoyo.execute(parametros);
+
                 bdlocal.actualizarValoracion(elID, usuarioWowzer, elRating);
                 miVentanaRating.dismiss();
             }

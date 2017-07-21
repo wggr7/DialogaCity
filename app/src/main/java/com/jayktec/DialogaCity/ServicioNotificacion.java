@@ -81,7 +81,7 @@ public class ServicioNotificacion extends Service {
                     public void run() {
                        // Log.i("sv not","bucle ");
                         BDControler bdlocal= new BDControler(ServicioNotificacion.this,1);
-                        if (!bdlocal.primeraVez()){
+                        if (!bdlocal.primeraVezBdDenuncia()){
                         ArrayList<Notificacion> arregloNotificacion = bdlocal.obtenerNotificaciones();
 
                         if (arregloNotificacion.size()>0)

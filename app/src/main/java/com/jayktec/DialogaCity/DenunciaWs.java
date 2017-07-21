@@ -3,6 +3,7 @@ package com.jayktec.DialogaCity;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
@@ -18,6 +19,8 @@ import org.ksoap2.transport.HttpTransportSE;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -29,6 +32,8 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 
 /**
@@ -37,14 +42,14 @@ import java.util.List;
 public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
 
     private int idDenuncia;
-    public Activity actividad;
+    private BDControler BDLocal;
 
     /**
      * constructor que recibe la actividad para poder grabar e la Base de Datos
-     * @param act
+     * @param BDLocal
      */
-    public DenunciaWs(Activity act){
-        this.actividad = act;
+    public DenunciaWs(BDControler BDLocal){
+        this.BDLocal = BDLocal;
     }
 
     /**
@@ -60,7 +65,7 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
      */
     protected Boolean doInBackground(Denuncia... params) {
         boolean result = false;
-        BDControler BDLocal = new BDControler(actividad.getApplicationContext(),1);
+       // BDControler BDLocal = new BDControler(actividad.getApplicationContext(),1);
         SoapObject resultsRequestSOAP;
         Denuncia denuncia = params[0];
 
@@ -79,7 +84,7 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
         Log.i("ws","aqui se parte");
 
 */
-
+        byte[] compressed = new byte[0];
 
         JSONObject jsonObj = new JSONObject();
         try {
@@ -87,14 +92,71 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
             jsonObj.put("DenTipo", denuncia.getTipoDenuncia());
             jsonObj.put("DenDescripcion", denuncia.getComentarios());
             jsonObj.put("DenEstado", denuncia.getEstadoDenuncia());
-            jsonObj.put("DenLongitud", denuncia.getEstadoDenuncia());
-            jsonObj.put("DenLatitud", denuncia.getEstadoDenuncia());
+            jsonObj.put("DenLongitud", denuncia.getLongitud());
+            jsonObj.put("DenLatitud", denuncia.getLatitud());
             jsonObj.put("DenValoracion", denuncia.getRating().toString());
             if(denuncia.getImagen()==null) {
                 jsonObj.put("DenImagen", "");
+                jsonObj.put("DenImagen2", "");
+                jsonObj.put("DenImagen3", "");
+                jsonObj.put("DenImagen4", "");
+
             }
             else{
-                jsonObj.put("DenImagen", Base64.encode(denuncia.getImagen()));
+                try {
+
+                    String strimg=Base64.encode(denuncia.getImagen());
+                    int count=strimg.length();
+                    int index=count/2;
+                    String part1=strimg.substring(0,index);
+                    String part2=strimg.substring(index);
+
+                    int count1=part1.length();
+                    int count2=part2.length();
+
+                    int index2=count1/2;
+                    int index3=count2/2;
+
+                    String mpart1=part1.substring(0,index2);
+                    String mpart2=part1.substring(index2);
+
+                    String mpart3=part2.substring(0,index3);
+                    String mpart4=part2.substring(index3);
+
+
+                    Log.i("wsFotoindex", String.valueOf(index));
+                    Log.i("wsFotocount", String.valueOf(count));
+                    Log.i("wsFotoPart1", String.valueOf(mpart1.length()));
+                    Log.i("wsFotoPart2",  String.valueOf(mpart2.length()));
+                    Log.i("wsFotoPart3", String.valueOf(mpart3.length()));
+                    Log.i("wsFotoPart4",  String.valueOf(mpart4.length()));
+
+
+
+                    //    Log.i("wsFoto", strimg);
+            //        Log.i("wsFotoPart1", part1);
+          //          Log.i("wsFotoPart2", part2);
+                if(count<25000){
+                    jsonObj.put("DenImagen",mpart1);
+                    jsonObj.put("DenImagen2",mpart2);
+                    jsonObj.put("DenImagen3",mpart3);
+                    jsonObj.put("DenImagen4",mpart4);
+
+                }
+                else{
+
+                    jsonObj.put("DenImagen", "");
+                    jsonObj.put("DenImagen2", "");
+                    jsonObj.put("DenImagen3", "");
+                    jsonObj.put("DenImagen4", "");
+                }
+                    
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
             }
 
         } catch (JSONException e) {
@@ -317,6 +379,33 @@ public class DenunciaWs extends AsyncTask<Denuncia,Void, Boolean> {
     {
         return     idDenuncia;
     }
+
+
+
+    public static byte[] compress(String str) throws Exception {
+
+        System.out.println("String length : " + str.length());
+        ByteArrayOutputStream obj=new ByteArrayOutputStream();
+        GZIPOutputStream gzip = new GZIPOutputStream(obj);
+        gzip.write(str.getBytes("UTF-8"));
+        gzip.close();
+        return obj.toByteArray();
+    }
+
+    public static String decompress(byte[] bytes) throws Exception {
+
+
+        GZIPInputStream gis = new GZIPInputStream(new ByteArrayInputStream(bytes));
+        BufferedReader bf = new BufferedReader(new InputStreamReader(gis, "UTF-8"));
+        String outStr = "";
+        String line;
+        while ((line=bf.readLine())!=null) {
+            outStr += line;
+        }
+        System.out.println("Output String lenght : " + outStr.length());
+        return outStr;
+    }
+
 
 
 }

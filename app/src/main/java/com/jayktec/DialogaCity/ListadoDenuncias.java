@@ -13,6 +13,7 @@ import android.widget.ListView;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class ListadoDenuncias extends Activity {
@@ -87,29 +88,43 @@ public class ListadoDenuncias extends Activity {
 
             listadoItem.TextoValoracion= arregloDenuncias.get(i).getRating().toString();
             int posicionT = arregloDenuncias.get(i).getFechaDenuncia().indexOf("T");
+            String formatedDate=null;
             if (posicionT <= 0){
-                listadoItem.FechaDenuncia = arregloDenuncias.get(i).getFechaDenuncia();
+
+                long val = Long.valueOf(arregloDenuncias.get(i).getFechaDenuncia());
+                Date fech = new Date(val);
+                SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+                formatedDate = newFormat.format(fech);
+
+
+
+                listadoItem.FechaDenuncia =formatedDate ;
             }
             else{
-                listadoItem.FechaDenuncia = arregloDenuncias.get(i).getFechaDenuncia().substring(0,posicionT);
+                long val = Long.valueOf(arregloDenuncias.get(i).getFechaDenuncia().substring(0,posicionT));
+                Date fech = new Date(val);
+                SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+                formatedDate = newFormat.format(fech);
+                listadoItem.FechaDenuncia = formatedDate;
             }
 
 
-            String elEstado = arregloDenuncias.get(i).getEstadoDenuncia();
-            if (elEstado.isEmpty()){
-                elEstado = "X";
-            }
+            Integer elEstado = arregloDenuncias.get(i).getEstadoDenuncia();
+            Log.i("ws BDEstado",elEstado.toString() );
+         /*   if (elEstado.isEmpty()){
+                elEstado = "1";
+            }*/
             switch (elEstado){
-                case "P":
+                case 1:
                     listadoItem.ImagenEstado = R.drawable.pendiente;
                     break;
-                case "P1":
+                case 2:
                     listadoItem.ImagenEstado = R.drawable.enproceso1;
                     break;
-                case "P2":
+                case 3:
                     listadoItem.ImagenEstado = R.drawable.enproceso2;
                     break;
-                case "R":
+                case 4:
                     listadoItem.ImagenEstado = R.drawable.realizado;
                     break;
                 default:

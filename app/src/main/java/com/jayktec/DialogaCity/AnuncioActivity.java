@@ -92,7 +92,7 @@ public class AnuncioActivity extends Activity {
                 TVFecha.setText(unaDenuncia.getFechaDenuncia().substring(0,posicion));
             }
             TVComentario.setText(unaDenuncia.getComentarios());
-            String elEstado = unaDenuncia.getEstadoDenuncia();
+            Integer elEstado = unaDenuncia.getEstadoDenuncia();
 
 
             if (imagenDenuncia != null) {

@@ -12,7 +12,7 @@ public class Denuncia {
     private Double latitud;
     private Double longitud;
     private Integer tipoDenuncia;
-    private String estadoDenuncia;
+    private Integer estadoDenuncia;
     private String comentarios;
     private byte[] imagen;
     private Double rating;
@@ -97,11 +97,11 @@ BASURA	6
         this.tipoDenuncia = tipoDenuncia;
     }
 
-    public String getEstadoDenuncia() {
+    public Integer getEstadoDenuncia() {
         return estadoDenuncia;
     }
 
-    public void setEstadoDenuncia(String estadoDenuncia) {
+    public void setEstadoDenuncia(Integer estadoDenuncia) {
         this.estadoDenuncia = estadoDenuncia;
     }
 

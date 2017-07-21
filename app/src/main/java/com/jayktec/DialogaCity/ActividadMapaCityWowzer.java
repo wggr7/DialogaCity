@@ -86,7 +86,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Notificacion = getIntent().getIntExtra("Notificacion", 0);
-
+        Log.i("ws", "estoy entrandooooooo " );
         setContentView(R.layout.activity_actividad_mapa_city_wowzer);
         miContexto = ActividadMapaCityWowzer.this;
         bdlocal = new BDControler(this, 1);
@@ -108,19 +108,19 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
         Integer control = bdlocal.devolverIdUltimaDenuncia();
         Log.i("ws ulden:", " " + control);
         Integer DenWow = 0;
-        Log.i("ws ulden:", " " + control);
+
         // DenunciaMysqlWs cargaDenuncia = new DenunciaMysqlWs(ActividadMapaCityWowzer.this);
         // se verifica si es la primera vez , si es asi se deben traer todos los registros
         int temp = iDUsuarioWow;
         int temp1 = control;
 
-        if (bdlocal.primeraVez()) {
+     /*   if (bdlocal.primeraVez()) {
             temp1 = 0;
             temp = 0;
         }
         Integer[] lista = {temp1, temp};
-
-        //cargaDenuncia.execute(lista);
+*/
+     //   cargaDenuncia.execute(lista);
 
         arregloDenuncias = new ArrayList<>();
         ubicacionGPS = new GPSTracker(this);
@@ -240,7 +240,7 @@ public class ActividadMapaCityWowzer extends ActionBarActivity {
         });
 
         //yle 9-11/2015
-        //    comprobarServicios();
+            comprobarServicios();
 /*
         filter = new IntentFilter();
         filter.addAction(ServicioSincronizacion.REFRESH_DATA_INTENT);
@@ -435,18 +435,20 @@ actividad cultural 9
                 SimpleDateFormat formatoFecha = new SimpleDateFormat("MM-dd-yyyy");
                 Denuncia unaDenuncia = new Denuncia();
                 unaDenuncia.setIdWowzer(iDUsuarioWow);
-                //  Log.i("ID_USUARIO:", "" + iDUsuarioWow);
+
                 unaDenuncia.setIdDenWow(0);
                 unaDenuncia.setWowzer(usuarioWowzer);
                 unaDenuncia.setFechaDenuncia(formatoFecha.format(new Date()));
                 unaDenuncia.setLatitud(miLatitud);
                 unaDenuncia.setLongitud(miLongitud);
                 unaDenuncia.setTipoDenuncia(laDenuncia);
-                unaDenuncia.setEstadoDenuncia("1");
+                unaDenuncia.setEstadoDenuncia(1);
                 unaDenuncia.setComentarios(TVComentarios.getText().toString());
                 if (fotoDenuncia != null) {
+                    Bitmap converetdImage = getResizedBitmap(fotoDenuncia, 300);
                     streamDatosFotos = new ByteArrayOutputStream();
-                    fotoDenuncia.compress(Bitmap.CompressFormat.JPEG, 100, streamDatosFotos);
+                    converetdImage.compress(Bitmap.CompressFormat.JPEG, 50, streamDatosFotos);
+                    Log.i("wsImagen",converetdImage.getWidth()+" - "+converetdImage.getHeight() );
                     byte[] arregloBytes = streamDatosFotos.toByteArray();
                     unaDenuncia.setImagen(arregloBytes);
                 }
@@ -462,13 +464,13 @@ actividad cultural 9
                 //28/09/2015 yle
                 // Cambios YLe y ame
                 unaDenuncia.setIdDenuncia(idDen.intValue());
-                DenunciaWs guardaDenunciaMysql = new DenunciaWs(ActividadMapaCityWowzer.this);
+                DenunciaWs guardaDenunciaMysql = new DenunciaWs(bdlocal);
                 Denuncia[] lista = {unaDenuncia};
                 guardaDenunciaMysql.execute(lista);
                 // Log.i("ID Adentro:", "" + idDen.intValue());
                 //28/09/2015 yle
 
-                colocarMarcador(miLatitud, miLongitud, idDen.intValue(), usuarioWowzer, laDenuncia, "P");
+                colocarMarcador(miLatitud, miLongitud, idDen.intValue(), usuarioWowzer, laDenuncia, 1);
 
                 //Fin YLE
                 ventanaAgregarDenuncia.dismiss();
@@ -494,6 +496,28 @@ actividad cultural 9
         ventanaAgregarDenuncia.show();
     }
 
+
+
+    public Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float)width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
+    }
+
+
+
+
+
+
     private void actualizarMarcador() {
 //miMapa.removeMapObject();
 
@@ -510,7 +534,7 @@ actividad cultural 9
      * @param tipo          tipo de la denuncia para identificar el marcador
      * @param estado        Estado de la denuncia
      */
-    private void colocarMarcador(Double latitud, Double longitud, int idDenuncia, String usuarioWowzer, int tipo, String estado) {
+    private void colocarMarcador(Double latitud, Double longitud, int idDenuncia, String usuarioWowzer, int tipo, Integer estado) {
         // Log.i("COLOCAR_M:", "Lat:" + latitud + " Lon:" + longitud + " ID:" + idDenuncia + " WOW" + usuarioWowzer);
         //Log.i("COLOCAR_M:", "tipo:" + tipo + " estado:" + estado);
         MapMarker marcador = new MapMarker();
@@ -665,7 +689,7 @@ actividad cultural 9
     @Override
     public void onStart() {
         super.onStart();
-
+        Log.i("ws ulden:", "estoy entrandooooooo " );
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -747,7 +771,7 @@ actividad cultural 9
                     grupoDatos.putString("AliasWowzer", usuarioWowzer);
                     miDenuncia.putExtras(grupoDatos);
                     miDenuncia.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
+                    Log.i("ws denuncia", String.valueOf(idDenuncia));
                     startActivity(miDenuncia);
 
                 }

@@ -14,7 +14,11 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Yisheng  15-09-2015.
@@ -40,18 +44,25 @@ public class ListadoComentarios extends Activity {
         setContentView(R.layout.activity_listado_comentarios);
         ComentarioMysqlWs listado = new ComentarioMysqlWs();
         Bundle datosEntrada = getIntent().getExtras();
+
         idDenuncia = datosEntrada.getInt("IDDenuncia");
-        iDUsuarioWow = datosEntrada.getInt("IDWowzer");
+        iDUsuarioWow = datosEntrada.getInt("wowzer");
         idDenunciaWs = datosEntrada.getInt("IDDenunciaWS");
         misComentarios = datosEntrada.getString("ComentDenuncia");
-        fechaComentario = datosEntrada.getString("FechaDenuncia");
+        usrWowzer=datosEntrada.getString("DenWowzer");
+        String denFecha=null;
+        long val2 = Long.valueOf(datosEntrada.getString("FechaDenuncia"));
+        Date fech2 = new Date(val2);
+        SimpleDateFormat newFormat2 = new SimpleDateFormat("yyyy-MM-dd");
+        denFecha = newFormat2.format(fech2);
 
+        fechaComentario = denFecha;
         denuncia = String.valueOf(idDenunciaWs);
 
         ListadoComentarioItem itemEntradaListado = new ListadoComentarioItem();
         itemEntradaListado.TextoDenuncia = misComentarios;
         itemEntradaListado.Fecha = fechaComentario;
-        itemEntradaListado.Usuario = "yo"; //usrWowzer;
+        itemEntradaListado.Usuario = usrWowzer; //usrWowzer;
          //ListadoComentarioItem(0,misComentarios,0,iDUsuarioWow,"Pepe",0,fechaComentario);
         arregloListadoDeItem.add(itemEntradaListado);
 
@@ -80,13 +91,38 @@ pd.dismiss();
         try {
             if (arregloComentarios.length > 0) {
 
-
+                Date fecha =new Date();
                 for (int i = 0; i < arregloComentarios.length; i++) {
                     Log.i("Ls hgds ccom", "empezamos con los comentarios");
                     ListadoComentarioItem listadoItem = new ListadoComentarioItem();
                     Comentario com = arregloComentarios[i];
                     listadoItem.TextoDenuncia = com.get_comentario();
-                    listadoItem.Fecha = com.get_fecha();
+
+                    String formatedDate=null;
+/*
+                    SimpleDateFormat originalFormat = new SimpleDateFormat("yyMMddHHmmss");
+
+                    try {
+                        Date date = originalFormat.parse(com.get_fecha());
+                        SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        formatedDate = newFormat.format(date);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+*/ try {
+                        long val = Long.valueOf(com.get_fecha());
+                        Date fech = new Date(val);
+                        SimpleDateFormat newFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        formatedDate = newFormat.format(fech);
+                        Log.i("ws", "correcto");
+                    }
+                    catch (Exception e){
+                        Log.i("ws", "error"+e.toString());
+                    }
+
+
+
+                    listadoItem.Fecha = formatedDate;
                     listadoItem.Usuario = com.getLoginUsuario();
                     arregloListadoDeItem.add(listadoItem);
                 }

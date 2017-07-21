@@ -187,7 +187,7 @@ public class DenunciaXml  implements KvmSerializable {
                 den.setComentarios(value.toString());
                 break;
             case 1:
-                den.setEstadoDenuncia(value.toString());
+                den.setEstadoDenuncia(Integer.parseInt(value.toString()));
                 break;
             case 2:
                 den.setFechaDenuncia(value.toString());

@@ -70,16 +70,36 @@ public class Compartir {
     public void compartirTwitter(){
         Intent tweetIntent = new Intent(Intent.ACTION_SEND);
         //todo mensaje a compartir
-        String mensaje ="Alerta agregada via @DialogaCity "
-                + denuncia.getComentarios()
+
+       // String mensaje ="Alerta agregada via DialogaCity ";
+
+        tweetIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        tweetIntent.putExtra(Intent.EXTRA_STREAM, denuncia.getImagen());
+        tweetIntent.setType("image/png");
+
+
+     //   tweetIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
+        actividad.startActivity(Intent.createChooser(tweetIntent, "Share with"));
+
+            /*    + denuncia.getComentarios()
                 + " http://www.jayktec.com.ve/consultarAlertas.jsp?miLatitud="
-                + denuncia.getLatitud() + "&miLongitud="+ denuncia.getLongitud() +"" ;
+                + denuncia.getLatitud() + "&miLongitud="+ denuncia.getLongitud() +"" ;*/
 
-        tweetIntent.putExtra(Intent.EXTRA_SUBJECT,"denuncia de DialogaCity");
-        tweetIntent.putExtra(Intent.EXTRA_TEXT, mensaje);
-        tweetIntent.putExtra(Intent.EXTRA_STREAM,denuncia.getImagen());
-        tweetIntent.setType("image/jpeg");
+        //tweetIntent.putExtra(Intent.EXTRA_SUBJECT,"denuncia de DialogaCity");
 
+       // tweetIntent.putExtra(Intent.EXTRA_STREAM,denuncia.getImagen());
+       // tweetIntent.setType("image/jpeg");
+
+
+
+
+
+
+
+
+
+
+/*
         PackageManager packManager = actividad.getPackageManager();
        // packManager.GET_SHARED_LIBRARY_FILES
         List<ResolveInfo> resolvedInfoList = packManager.queryIntentActivities(tweetIntent,  PackageManager.MATCH_DEFAULT_ONLY);
@@ -95,7 +115,7 @@ public class Compartir {
                 break;
             }
         }
-        if(resolved)
+      /*  if(resolved)
         {
             actividad.startActivity(tweetIntent);
         }
@@ -106,7 +126,7 @@ public class Compartir {
                 i.setData(Uri.parse("https://twitter.com/intent/tweet?text=message&via=profileName"));
                 actividad.startActivity(i);
                 Toast.makeText(actividad, "Twitter app isn't found", Toast.LENGTH_LONG).show();
-            }
+            }*/
 
     }
 

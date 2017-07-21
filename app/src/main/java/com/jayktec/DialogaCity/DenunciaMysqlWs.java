@@ -78,7 +78,7 @@ public class DenunciaMysqlWs   extends AsyncTask<Integer,Integer,Boolean> {
                     Log.d("Ws fecha:",fecha.toString());
                     registro.setFechaDenuncia(fecha.toString());
                     registro.setTipoDenuncia((ic.getInt("denTipo")));
-                    registro.setEstadoDenuncia(ic.getString("denEstado"));
+                    registro.setEstadoDenuncia(ic.getInt("denEstado"));
                     registro.setLongitud(Double.parseDouble(ic.getString("denLongitud")));
                     Log.i("ws lat", (ic.getString("denLongitud")));
                     registro.setLatitud(ic.getDouble("denLatitud"));

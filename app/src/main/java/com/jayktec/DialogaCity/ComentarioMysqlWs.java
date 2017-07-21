@@ -55,7 +55,7 @@ public class ComentarioMysqlWs extends AsyncTask<String,Integer,Comentario[]> {
         SoapObject resultsRequestSOAP;
 int lista;
         String param = params[0];
-
+        Log.i("ws",param);
         URL url;
         HttpURLConnection connection = null;
         try {
@@ -107,11 +107,29 @@ int lista;
                     lista= jsonresp.length();
                     this.listaComentario= new Comentario[lista];
                     for (int i = 0; i < lista; i++) {
-                        String comen= (String) jsonresp.get(i);
-                        JSONObject comentario=new JSONObject(comen);
+                        JSONObject comentario= (JSONObject) jsonresp.get(i);
+
                         Comentario registro= new Comentario();
                         registro.set_comentario(comentario.getString("comComentarios"));
                         registro.set_fecha(comentario.getString("comFechaCreacion"));
+                  try {
+                      registro.setLoginUsuario(comentario.getJSONObject("comWowzer").getString("wowLogin"));
+                      Log.i("ws", "correctoWowzer");
+                  }
+                      catch (Exception e) {
+                          Log.i("ws", "falloWowzer"+e.toString());
+                      }
+
+                        try {
+                            registro.setLoginUsuario(comentario.getJSONObject("comUsuario").getString("usuLogin"));
+                            Log.i("ws", "correctoUsuario");
+                        }
+                        catch (Exception e) {
+                            Log.i("ws", "falloUsuario"+e.toString());
+                        }
+
+
+
 
                         this.listaComentario[i]=registro;
                     }

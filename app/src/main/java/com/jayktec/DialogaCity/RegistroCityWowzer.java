@@ -105,14 +105,13 @@ public class RegistroCityWowzer extends ActionBarActivity {
                 else
                {
                     //TODO toast ... estas tostado
-                   Toast toast1 =
-                           Toast.makeText(getApplicationContext(),
-                                   "Problemas con el registro intente nuevamente", Toast.LENGTH_LONG);
+                   Toast toast1 = Toast.makeText(getApplicationContext(), "Problemas con el registro intente nuevamente", Toast.LENGTH_LONG);
+
 
                    ETEmail.setText("");
-                   ETPassword.setText("");
+                  ETPassword.setText("");
 
-                   toast1.show();
+                  toast1.show();
 
                 }
 
